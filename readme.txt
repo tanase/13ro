@@ -1,5 +1,8 @@
 ・使い方
 
+0. DB用のファイルを最初に作る。
+> touch db.yaml
+
 1. ID登録
 > rating register NAME NICKNAME
 NAMEは囲碁クエストの名前のようなもので一意のローマ字
