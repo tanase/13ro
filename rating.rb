@@ -5,7 +5,7 @@ require "./elo"
 
 DBFILE = "db.yaml"
 FileUtils.cp(DBFILE, DBFILE + ".bak")
-$db = YAML.load_file(DBFILE) || {users: [], handicap: 30}
+$db = YAML.load_file(DBFILE) || {users: [], penalty: 30}
 DEFAULT_RATING = 1500
 
 def usage
@@ -29,7 +29,7 @@ def storeDB
 end
 
 def register(args)
-  if args.size != 2
+  if args.size != 2 && args.size != 3
     usage
   end
 
@@ -41,10 +41,15 @@ def register(args)
   end
   
   nickname = args[1]
-  puts "name:#{name} nickname:#{nickname}"
+  rating = DEFAULT_RATING
+  if args.size == 3
+    rating = args[2].to_i
+  end
+  
+  puts "name:#{name} nickname:#{nickname} rating:#{rating}"
   puts "Is it OK to proceed? (y/n)"
   if STDIN.gets.chomp == "y"
-    $db[:users].push({name: name, nickname: nickname, rating: DEFAULT_RATING, win: 0, loss: 0, draw: 0})
+    $db[:users].push({name: name, nickname: nickname, rating: rating, win: 0, loss: 0, draw: 0})
     storeDB
   end
 end
