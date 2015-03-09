@@ -5,7 +5,8 @@ require "./elo"
 
 DBFILE = "db.yaml"
 FileUtils.cp(DBFILE, DBFILE + ".bak")
-$db = YAML.load_file(DBFILE) || {users: [], penalty: 30}
+DEFAULT_PENALTY = 30
+$db = YAML.load_file(DBFILE) || {users: [], penalty: DEFAULT_PENALTY}
 DEFAULT_RATING = 1500
 
 def usage
@@ -28,7 +29,7 @@ def storeDB
   end
 end
 
-def register(args)
+def register(args, prompt)
   if args.size != 2 && args.size != 3
     usage
   end
@@ -47,8 +48,11 @@ def register(args)
   end
   
   puts "name:#{name} nickname:#{nickname} rating:#{rating}"
-  puts "Is it OK to proceed? (y/n)"
-  if STDIN.gets.chomp == "y"
+  if prompt
+    puts "Is it OK to proceed? (y/n)"
+  end
+  
+  if !prompt || STDIN.gets.chomp == "y"
     $db[:users].push({name: name, nickname: nickname, rating: rating, win: 0, loss: 0, draw: 0})
     storeDB
   end
@@ -63,7 +67,7 @@ def result(args)
   result = args[2].to_i
   handicap = 0
   handicap = args[3].to_i if args.size == 4
-  $db[:penalty] ||= 30
+  $db[:penalty] ||= DEFAULT_PENALTY
   orgPenalty = $db[:penalty]
   handicapPoint = handicap * orgPenalty
 
@@ -132,19 +136,49 @@ def result(args)
   storeDB
 end
 
+def komi(args)
+  if args.size != 2
+    usage
+  end
+
+  names = [args[0], args[1]]
+  players = [find(names[0]), find(names[1])]
+  for i in 0 ... 2
+    if !players[i]
+      puts "Player #{names[i]} not found."
+      return
+    end
+  end
+  
+  penalty = $db[:penalty] || DEFAULT_PENALTY
+  res = ((players[0][:rating] - players[1][:rating]).abs / penalty).to_i
+  lower = players[0][:rating] <= players[1][:rating] ? 0 : 1
+  puts "Komi=#{res}"
+  puts "Black:#{names[lower]} White:#{names[1-lower]}(#{6-res})"
+end
+
 def main
   if ARGV.size < 2
     usage
   end
-
+  
   command = ARGV[0]
 
   if command == "register"
-    register ARGV.slice 1 ... ARGV.size
-  end
+    register(ARGV[1 ... ARGV.size], true)
+    
+  elsif command == "register_noprompt"
+    register(ARGV[1 ... ARGV.size], false)
+    
+  elsif command == "result"
+    result(ARGV[1 ... ARGV.size])
 
-  if command == "result"
-    result ARGV.slice 1 ... ARGV.size
+  elsif command == "komi"
+    komi(ARGV[1 ... ARGV.size])
+
+  else
+    puts "Unknown command #{command}"
+    usage
   end
 end
 

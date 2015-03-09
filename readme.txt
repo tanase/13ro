@@ -10,6 +10,9 @@ NICKNAMEは何でもOK
 例)
 rating register tanase "棚瀬 寧" 1500
 
+> rating register_noprompt ..
+registerと同じだが確認promptなし。
+
 2. 結果登録
 > rating result BLACK_NAME WHITE_NAME RESULT [HANDICAP]
 例)
@@ -18,6 +21,9 @@ rating result foo bar 0
 黒勝ちコミのハンディ6(例えば本来白が+6のハンディのところ互先)
 rating result foo bar 1 6
 
+3. 適正コミ値
+> komi BLACK_NAME WHITE_NAME
+ハンディなし(白が６目のコミ)を基準として下手にどれだけコミを与えるべきか。
 
 ・データベース
 当面は
