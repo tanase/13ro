@@ -87,7 +87,7 @@ end
 # rating0: 下手
 # rating1: 上手
 # result: 1, 0.5, 0 いずれも下手から見た勝敗
-M = 1.0
+M = 0.1
 def newHandicapPenalty(orgPenalty, handicap, rating0, rating1, result)
   # 期待勝率
   p = expectedScore(rating0 + orgPenalty * handicap, rating1);

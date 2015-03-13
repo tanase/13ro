@@ -5,7 +5,7 @@ require "./elo"
 
 DBFILE = "db.yaml"
 FileUtils.cp(DBFILE, DBFILE + ".bak")
-DEFAULT_PENALTY = 30
+DEFAULT_PENALTY = 20
 $db = YAML.load_file(DBFILE) || {users: [], penalty: DEFAULT_PENALTY}
 DEFAULT_RATING = 1500
 
