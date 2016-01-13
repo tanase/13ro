@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-P0 = 10
-R0 = 200
-P1 = 70
-R1 = 30
-
+P0 = 6                          # P0試合までは
+R0 = 140                        # K=R0
+P1 = 20                         # P1試合で
+R1 = 30                         # K=R1に
+OPPP = 15                       # OPPP試合未満の相手の場合は
+OPPW = 0.5                      # 重みをOPPWに
 
 def expectedScore(r0, r1)
     return 1.0 / (1 + 10 ** ((r1 - r0) / 400))
@@ -34,10 +35,8 @@ def kValue(played, loss, oppPlayed, oppLoss)
   end
   m = 1;
   # 相手が新人の場合、軽めに
-  # 0試合  => 0.3
-  # 40試合 => 1
-  if oppPlayed < 40
-    m = 0.3 + 0.7 * oppPlayed / 40
+  if oppPlayed < OPPP
+    m = OPPW + (1 - OPPW) * oppPlayed / OPPP
   end
   return k * m;
 end
